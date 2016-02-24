@@ -92,6 +92,9 @@
     [self.trimmerView setTrackerColor:[UIColor cyanColor]];
     [self.trimmerView setDelegate:self];
     
+    self.trimmerView.maxLength = 1.0;
+    self.trimmerView.minLength = 1.0;
+    
     // important: reset subviews
     [self.trimmerView resetSubviews];
     

@@ -132,13 +132,14 @@
     [self.leftThumbView.layer setMasksToBounds:YES];
     [self.leftOverlayView addSubview:self.leftThumbView];
     [self.leftOverlayView setUserInteractionEnabled:YES];
-    UIPanGestureRecognizer *leftPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveLeftOverlayView:)];
-    [self.leftOverlayView addGestureRecognizer:leftPanGestureRecognizer];
+    //UIPanGestureRecognizer *leftPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveLeftOverlayView:)];
+    //[self.leftOverlayView addGestureRecognizer:leftPanGestureRecognizer];
     [self.leftOverlayView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.8]];
     [self addSubview:self.leftOverlayView];
 
     // add right overlay view
-    CGFloat rightViewFrameX = CGRectGetWidth(self.frameView.frame) < CGRectGetWidth(self.frame) ? CGRectGetMaxX(self.frameView.frame) : CGRectGetWidth(self.frame) - self.thumbWidth;
+    //CGFloat rightViewFrameX = CGRectGetWidth(self.frameView.frame) < CGRectGetWidth(self.frame) ? CGRectGetMaxX(self.frameView.frame) : CGRectGetWidth(self.frame) - self.thumbWidth;
+    CGFloat rightViewFrameX = self.thumbWidth + self.widthPerSecond;
     self.rightOverlayView = [[UIView alloc] initWithFrame:CGRectMake(rightViewFrameX, 0, self.overlayWidth, CGRectGetHeight(self.frameView.frame))];
     if (self.rightThumbImage) {
         self.rightThumbView = [[ICGThumbView alloc] initWithFrame:CGRectMake(0, 0, self.thumbWidth, CGRectGetHeight(self.frameView.frame)) thumbImage:self.rightThumbImage];
@@ -148,8 +149,8 @@
     [self.rightThumbView.layer setMasksToBounds:YES];
     [self.rightOverlayView addSubview:self.rightThumbView];
     [self.rightOverlayView setUserInteractionEnabled:YES];
-    UIPanGestureRecognizer *rightPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveRightOverlayView:)];
-    [self.rightOverlayView addGestureRecognizer:rightPanGestureRecognizer];
+    //UIPanGestureRecognizer *rightPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveRightOverlayView:)];
+    //[self.rightOverlayView addGestureRecognizer:rightPanGestureRecognizer];
     [self.rightOverlayView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.8]];
     [self addSubview:self.rightOverlayView];
     
@@ -300,16 +301,21 @@
     CGFloat screenWidth = CGRectGetWidth(self.frame) - 2*self.thumbWidth; // quick fix to make up for the width of thumb views
     NSInteger actualFramesNeeded;
     
-    CGFloat frameViewFrameWidth = (duration / self.maxLength) * screenWidth;
+    self.widthPerSecond = picWidth;
+    CGFloat frameViewFrameWidth = self.widthPerSecond * duration;
+    //CGFloat frameViewFrameWidth = (duration / self.maxLength) * screenWidth;
     [self.frameView setFrame:CGRectMake(self.thumbWidth, 0, frameViewFrameWidth, CGRectGetHeight(self.frameView.frame))];
     CGFloat contentViewFrameWidth = CMTimeGetSeconds([self.asset duration]) <= self.maxLength + 0.5 ? screenWidth + 30 : frameViewFrameWidth;
+    contentViewFrameWidth += screenWidth - self.widthPerSecond + self.thumbWidth;
     [self.contentView setFrame:CGRectMake(0, 0, contentViewFrameWidth, CGRectGetHeight(self.contentView.frame))];
     [self.scrollView setContentSize:self.contentView.frame.size];
-    NSInteger minFramesNeeded = screenWidth / picWidth + 1;
-    actualFramesNeeded =  (duration / self.maxLength) * minFramesNeeded + 1;
+    //NSInteger minFramesNeeded = screenWidth / picWidth + 1;
+    NSInteger minFramesNeeded = (duration * picWidth) / picWidth + 1;
+    //actualFramesNeeded =  (duration / self.maxLength) * minFramesNeeded + 1;
+    actualFramesNeeded = minFramesNeeded;
     
     Float64 durationPerFrame = duration / (actualFramesNeeded*1.0);
-    self.widthPerSecond = frameViewFrameWidth / duration;
+    //self.widthPerSecond = frameViewFrameWidth / duration;
     
     int preferredWidth = 0;
     NSMutableArray *times = [[NSMutableArray alloc] init];
